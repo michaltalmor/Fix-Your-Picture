@@ -1,0 +1,52 @@
+# How to use images in kivy using .kv
+
+# root widget od Imagekv Calss
+<Imagekv>:
+
+    # Giving orentation to Box Layout
+    orientation:'vertical'
+
+###############################################
+
+    # Adding Box Layoyt
+    BoxLayout:
+
+        padding:10
+
+        # Adding image from the system
+        Image:
+            source: 'ice_river.jpg'
+
+            # Giving the size of image
+            size_hint_x: 1
+
+            # allow sterching of image
+            allow_stretch: True
+
+        # Giving Label to images
+
+        Label:
+            size_hint_x: 0.2
+            text:"Python"
+            font_size:11
+            bold:True
+
+
+
+###############################################
+
+   # Drawing the line between the multiples
+    Label:
+        canvas.before:
+            Color:
+                rgba: (1, 1, 1, 1)
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        size_hint_y: None
+        height: 1
+
+################################################
+
+
+
