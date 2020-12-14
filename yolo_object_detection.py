@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+
 # Load Yolo
 net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
 classes = []
@@ -11,8 +12,8 @@ output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 colors = np.random.uniform(0, 255, size=(len(classes), 3))
 
 # Loading image
-img = cv2.imread("woman_in_background.jpg")
-img = cv2.resize(img, None, fx=0.2, fy=0.2)
+img = cv2.imread("ice_river.jpg")
+img = cv2.resize(img, None, fx=0.4, fy=0.4)
 height, width, channels = img.shape
 
 # Detecting objects
@@ -84,4 +85,4 @@ cv2.imshow("Image", img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 print("bla bla")
-print("roi")
+print("michal")
