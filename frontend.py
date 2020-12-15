@@ -1,3 +1,4 @@
+import cv2
 import kivy
 from kivy.core.window import Window
 from kivy.properties import ObjectProperty
@@ -23,14 +24,20 @@ class FileChoosePopup(Popup):
 class MyLayout(Widget):
     my_detection = Detection()
     my_image = ObjectProperty(None)
+    the_popup = ObjectProperty(None)
+
+    def load_picture(self):
+        pass
 
     def change_picture(self, img_path="party.jpeg"):
         self.my_image.source = img_path
 
     def detect_objects(self):
-        print("detect")
-
-    the_popup = ObjectProperty(None)
+        self.my_detection.load_image(self.my_image.source)
+        img = self.my_detection.detect_objects()
+        cv2.imshow("Image", img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
     def load_picture(self):
         self.the_popup = FileChoosePopup(load=self.load)
@@ -40,7 +47,6 @@ class MyLayout(Widget):
         new_image_path = str(selection[0])
         self.the_popup.dismiss()
         self.change_picture(new_image_path)
-
 
 class MyButton(HoverBehavior, Button):
     pass
