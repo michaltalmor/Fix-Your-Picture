@@ -1,31 +1,31 @@
 import kivy
 from kivy.core.window import Window
-
-kivy.require('1.9.0')
+from kivy.uix.button import Button
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.widget import Widget
+from kivymd.uix.behaviors import HoverBehavior
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.config import Config
-
-# 0 being off 1 being on as in true / false
-# you can use 0 or 1 && True or False
-Config.set('graphics', 'resizable', False)
+kivy.require('1.9.0')
 
 
 # creating the root widget used in .kv file
-class Imagekv(BoxLayout):
-    '''
-        no need to do anything here as
-        we are building things in .kv file
-    '''
+class MyLayout(Widget):
+    def load_picture(self):
+        pass
+
+
+class MyButton(HoverBehavior, Button):
     pass
 
 
-# class in which name .kv file must be named My.kv.
 class MyApp(App):
     def build(self):
-        return Imagekv()
+        return MyLayout()
 
 
 if __name__ == '__main__':
-    Window.size = (700, 400)
+    Window.borderless = False
+    Window.size = (800, 400)
     MyApp().run()
