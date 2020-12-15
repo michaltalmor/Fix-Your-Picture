@@ -2,6 +2,31 @@
 #:import utils kivy.utils
 #:import hex kivy.utils.get_color_from_hex
 
+<FileChoosePopup>:
+    title: "Choose a .CSV File"
+    size_hint: .9, .9
+    auto_dismiss: False
+
+    BoxLayout:
+        orientation: "vertical"
+        FileChooser:
+            id: filechooser
+            FileChooserIconLayout
+
+        BoxLayout:
+            size_hint: (1, 0.1)
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            spacing: 20
+            Button:
+                text: "Cancel"
+                on_release: root.dismiss()
+            Button:
+                text: "Load"
+                on_release: root.load(filechooser.selection)
+                id: ldbtn
+                disabled: True if filechooser.selection==[] else False
+
+
 <MyLayout>:
     my_image: my_image
 
@@ -24,11 +49,6 @@
             padding: 10
             # spacing: 0
             size_hint_x: 0.4
-
-            Label:
-                text:"Python"
-                font_size:11
-                bold:True
 
             FloatLayout:
                 # size_hint: (0.8, 1)
