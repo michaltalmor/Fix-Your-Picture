@@ -7,6 +7,7 @@ class Detection:
     height, width, channels = 0, 0, 0
     img = None
     outs = None
+    grade_object = None
 
     def __init__(self):
         # Load Yolo
@@ -23,7 +24,7 @@ class Detection:
         # Loading image
         # img = cv2.imread("bad_grade.jpg")
         self.img = cv2.imread(image_path)
-        self.img = cv2.resize(self.img, None, fx=0.2, fy=0.2)
+        self.img = cv2.resize(self.img, None, fx=0.4, fy=0.4)
         self.height, self.width, self.channels = self.img.shape
 
     def detect_objects(self, confidence_level=0.5):
@@ -66,19 +67,25 @@ class Detection:
         self.draw_detected_object(confidences, class_ids, boxes)
 
     def draw_detected_object(self, confidences, class_ids, boxes):
+        # grade will calculate like this: 0 - front person, 1 - back person, 2 - other object
+        grade_object = {
+          "f_person": [],
+          "b_person": [],
+          "other_obj": []
+        }
         indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
-        print(indexes)
+        # print(indexes)
         font = cv2.FONT_HERSHEY_PLAIN
         people = []
         for i in range(len(boxes)):
             if i in indexes:
-                # x, y, w, h = boxes[i]
-                # label = str(classes[class_ids[i]])
-                # color = colors[class_ids[i]]
+                # is a person
                 if class_ids[i] == 0:
                     people.append(boxes[i])
                     color = [0, 255, 0]
+                # is not a person
                 else:
+                    grade_object["other_obj"].append(boxes[i])
                     x, y, w, h = boxes[i]
                     label = str(self.classes[class_ids[i]])
                     color = [0, 0, 255]
@@ -88,25 +95,43 @@ class Detection:
             max_high = np.max(np.array(people)[:, 3])
             # biggest_person = list(filter(lambda x: (np.array(people)[:, 3])[x] == max_high, people))[0]
             threshold_person_size_percent = 0.6
+            # front person
             for i in people:
                 if i[3] == max_high or i[3] >= max_high * threshold_person_size_percent:
+                    grade_object["f_person"].append(i)
                     color = [0, 255, 0]
+                # back person
                 else:
+                    grade_object["b_person"].append(i)
                     color = [255, 0, 0]
                 x, y, w, h = i
-                label = str(self.classes[class_ids[0]])
+                label = str(self.classes[0])
                 cv2.rectangle(self.img, (x, y), (x + w, y + h), color, 2)
                 cv2.putText(self.img, label, (x, y + 30), font, 3, color, 3)
-
+        self.grade_object = grade_object
         cv2.imshow("Image", self.img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-        print("bla bla")
-        print("michal")
+
+    def calculate_grade(self, grade_object):
+        grade = 100
+        n_obj = len(grade_object["other_obj"])
+        n_f_person = len(grade_object["f_person"])
+        n_b_person = len(grade_object["b_person"])
+        n = n_obj + n_f_person + n_b_person
+
+        grade = grade - 70*(n_b_person/n) - 30*(n_obj/n)
+        print(grade)
+        return grade
+
+
 
 
 detc = Detection()
-detc.load_image('bad_grade.jpg')
+# detc.load_image('bad_grade.jpg')
+detc.load_image('woman_in_background.jpg')
+# detc.load_image('ice_river.jpg')
 detc.detect_objects()
+detc.calculate_grade(detc.grade_object)
 
 
