@@ -16,15 +16,14 @@ kivy.require('1.9.0')
 
 # creating the root widget used in .kv file
 class MyLayout(Widget):
-    # my_detection = Detection()
+    my_detection = Detection()
     my_image = ObjectProperty(None)
 
     def load_picture(self):
         pass
 
-    def change_picture(self):
-        s = "party.jpeg"
-        self.my_image.source = s
+    def change_picture(self, img_path="party.jpeg"):
+        self.my_image.source = img_path
 
     def detect_objects(self):
         print("detect")
