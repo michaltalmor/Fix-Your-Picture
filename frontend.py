@@ -15,6 +15,9 @@ class MyLayout(Widget):
     def load_picture(self):
         pass
 
+    def change_picture(self):
+        pass
+
 
 class MyButton(HoverBehavior, Button):
     pass
