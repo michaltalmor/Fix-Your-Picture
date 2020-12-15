@@ -1,3 +1,4 @@
+import cv2
 import kivy
 from kivy.core.window import Window
 from kivy.properties import ObjectProperty
@@ -26,8 +27,11 @@ class MyLayout(Widget):
         self.my_image.source = img_path
 
     def detect_objects(self):
-        print("detect")
-
+        self.my_detection.load_image(self.my_image.source)
+        img = self.my_detection.detect_objects()
+        cv2.imshow("Image", img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
 class MyButton(HoverBehavior, Button):
     pass

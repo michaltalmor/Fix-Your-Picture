@@ -64,7 +64,7 @@ class Detection:
 
                     # print(str(self.classes[class_id]))
                     # print(confidences)
-        self.draw_detected_object(confidences, class_ids, boxes)
+        return self.draw_detected_object(confidences, class_ids, boxes)
 
     def draw_detected_object(self, confidences, class_ids, boxes):
         # grade will calculate like this: 0 - front person, 1 - back person, 2 - other object
@@ -109,9 +109,10 @@ class Detection:
                 cv2.rectangle(self.img, (x, y), (x + w, y + h), color, 2)
                 cv2.putText(self.img, label, (x, y + 30), font, 3, color, 3)
         self.grade_object = grade_object
-        cv2.imshow("Image", self.img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        # cv2.imshow("Image", self.img)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+        return self.img
 
     def calculate_grade(self, grade_object):
         grade = 100
