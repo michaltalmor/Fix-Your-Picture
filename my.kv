@@ -37,7 +37,6 @@
                     text: "Upload Your Picture"
                     bold: True
                     on_press: root.load_picture()
-                    on_release: root.clear_inputs()
                     pos_hint: {'center_y': 0.5, 'center_x': 0.5}
                     size_hint: (0.85, 0.2)
                     canvas.before:
@@ -56,6 +55,23 @@
                     text: "Change Your Picture"
                     bold: True
                     on_press: root.change_picture()
+                    pos_hint: {'center_y': 0.5, 'center_x': 0.5}
+                    size_hint: (0.85, 0.2)
+                    canvas.before:
+                        Color:
+                            rgba: hex('#1D8515') if self.hovered else hex('#105A0A')
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [10]
+
+            FloatLayout:
+                # size_hint: (0.8, 1)
+                MyButton:
+                    background_color: 0,0,0,0
+                    text: "Detect"
+                    bold: True
+                    on_press: root.detect_objects()
                     pos_hint: {'center_y': 0.5, 'center_x': 0.5}
                     size_hint: (0.85, 0.2)
                     canvas.before:

@@ -127,11 +127,11 @@ class Detection:
 
 
 
-detc = Detection()
-# detc.load_image('bad_grade.jpg')
-detc.load_image('woman_in_background.jpg')
-# detc.load_image('ice_river.jpg')
-detc.detect_objects()
-detc.calculate_grade(detc.grade_object)
+# detc = Detection()
+# # detc.load_image('bad_grade.jpg')
+# detc.load_image('woman_in_background.jpg')
+# # detc.load_image('ice_river.jpg')
+# detc.detect_objects()
+# detc.calculate_grade(detc.grade_object)
 
 

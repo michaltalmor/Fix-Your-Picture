@@ -8,11 +8,15 @@ from kivymd.uix.behaviors import HoverBehavior
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.config import Config
+
+from yolo_object_detection import Detection
+
 kivy.require('1.9.0')
 
 
 # creating the root widget used in .kv file
 class MyLayout(Widget):
+    # my_detection = Detection()
     my_image = ObjectProperty(None)
 
     def load_picture(self):
@@ -21,7 +25,9 @@ class MyLayout(Widget):
     def change_picture(self):
         s = "party.jpeg"
         self.my_image.source = s
-        pass
+
+    def detect_objects(self):
+        print("detect")
 
 
 class MyButton(HoverBehavior, Button):
