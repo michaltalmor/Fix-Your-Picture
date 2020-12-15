@@ -24,7 +24,7 @@ class Detection:
         # Loading image
         # img = cv2.imread("bad_grade.jpg")
         self.img = cv2.imread(image_path)
-        self.img = cv2.resize(self.img, None, fx=0.4, fy=0.4)
+        # self.img = cv2.resize(self.img, None, fx=0.4, fy=0.4)
         self.height, self.width, self.channels = self.img.shape
 
     def detect_objects(self, confidence_level=0.5):
