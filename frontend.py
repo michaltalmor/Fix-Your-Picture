@@ -1,5 +1,6 @@
 import kivy
 from kivy.core.window import Window
+from kivy.properties import ObjectProperty
 from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.widget import Widget
@@ -12,10 +13,14 @@ kivy.require('1.9.0')
 
 # creating the root widget used in .kv file
 class MyLayout(Widget):
+    my_image = ObjectProperty(None)
+
     def load_picture(self):
         pass
 
     def change_picture(self):
+        s = "party.jpeg"
+        self.my_image.source = s
         pass
 
 
