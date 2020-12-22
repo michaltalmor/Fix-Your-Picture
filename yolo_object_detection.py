@@ -114,7 +114,8 @@ class Detection:
         # cv2.destroyAllWindows()
         return self.img
 
-    def calculate_grade(self, grade_object):
+    def calculate_grade(self):
+        grade_object = self.grade_object
         grade = 100
         n_obj = len(grade_object["other_obj"])
         n_f_person = len(grade_object["f_person"])
@@ -122,17 +123,16 @@ class Detection:
         n = n_obj + n_f_person + n_b_person
 
         grade = grade - 70*(n_b_person/n) - 30*(n_obj/n)
-        print(grade)
         return grade
 
 
 
 
-# detc = Detection()
-# # detc.load_image('bad_grade.jpg')
-# detc.load_image('woman_in_background.jpg')
-# # detc.load_image('ice_river.jpg')
-# detc.detect_objects()
-# detc.calculate_grade(detc.grade_object)
+detc = Detection()
+# detc.load_image('bad_grade.jpg')
+detc.load_image('woman_in_background.jpg')
+# detc.load_image('ice_river.jpg')
+detc.detect_objects()
+print(detc.calculate_grade())
 
 

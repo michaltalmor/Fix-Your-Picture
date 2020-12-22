@@ -33,6 +33,8 @@ class MyLayout(Widget):
     def detect_objects(self):
         self.my_detection.load_image(self.my_image.source)
         img = self.my_detection.detect_objects()
+        grade = self.my_detection.calculate_grade()
+        # binding function
         cv2.imshow("Image", img)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
