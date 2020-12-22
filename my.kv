@@ -2,16 +2,20 @@
 #:import utils kivy.utils
 #:import hex kivy.utils.get_color_from_hex
 
+###############################################
+
 <FileChoosePopup>:
     title: "Choose Your Picture"
     size_hint: .9, .9
     auto_dismiss: False
+
 
     BoxLayout:
         orientation: "vertical"
         FileChooser:
             id: filechooser
             FileChooserIconLayout
+
 
         BoxLayout:
             size_hint: (1, 0.1)
@@ -26,81 +30,105 @@
                 id: ldbtn
                 disabled: True if filechooser.selection==[] else False
 
-
-<MyLayout>:
-    my_image: my_image
-
 ###############################################
 
+<MyLayout>:
+
+    my_image: my_image
+    output: output
+
     BoxLayout:
+        canvas.before:
+            Color:
+                rgba: hex('#F1F1F1')
+            Rectangle:
+                size: self.size
         pos: root.pos
         size: root.size
-        # padding: 20
 
-        Image:
-            id: my_image
-            source: 'ice_river.jpg'
-            size_hint_x: 1
-            size_hint_y: 1
-            allow_stretch: True
+
+        BoxLayout:
+            padding: 20
+            Image:
+                id: my_image
+                source: 'ice_river.jpg'
+                size_hint_x: 1
+                size_hint_y: 1
+                allow_stretch: True
 
         BoxLayout:
             orientation:'vertical'
-            padding: 10
-            # spacing: 0
+            padding: [0, 15, 20, 10]
+
             size_hint_x: 0.4
 
-            FloatLayout:
-                # size_hint: (0.8, 1)
-                MyButton:
-                    background_color: 0,0,0,0
-                    text: "Upload Your Picture"
-                    bold: True
-                    on_press: root.load_picture()
-                    pos_hint: {'center_y': 0.5, 'center_x': 0.5}
-                    size_hint: (0.85, 0.2)
-                    canvas.before:
-                        Color:
-                            rgba: hex('#1D8515') if self.hovered else hex('#105A0A')
-                        RoundedRectangle:
-                            pos: self.pos
-                            size: self.size
-                            radius: [10]
+            BoxLayout:
+                size_hint_y: 0.6
+                orientation:'vertical'
+
+                FloatLayout:
+                    # size_hint: (0.8, 0.8)
+                    MyButton:
+                        color: hex('#000000')
+                        background_color: 0,0,0,0
+                        text: "Upload Your Picture"
+                        on_press: root.load_picture()
+                        pos_hint: {'center_y': 0.5, 'center_x': 0.5}
+                        size_hint: (0.85, 0.6)
+                        canvas.before:
+                            Color:
+                                rgba: hex('#7F94AB') if self.hovered else hex('#AFAFAF')
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [10]
+
+                FloatLayout:
+                    # size_hint: (0.8, 0.2)
+                    MyButton:
+                        color: hex('#000000')
+                        background_color: 0,0,0,0
+                        text: "Change Your Picture"
+                        on_press: root.change_picture()
+                        pos_hint: {'center_y': 0.5, 'center_x': 0.5}
+                        size_hint: (0.85, 0.6)
+                        canvas.before:
+                            Color:
+                                rgba: hex('#7F94AB') if self.hovered else hex('#AFAFAF')
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [10]
+
+                FloatLayout:
+                    # size_hint: (0.8, 0.8)
+                    MyButton:
+                        color: hex('#000000')
+                        background_color: 0,0,0,0
+                        text: "Detect"
+                        on_press: root.detect_objects()
+                        pos_hint: {'center_y': 0.5, 'center_x': 0.5}
+                        size_hint: (0.85, 0.6)
+                        canvas.before:
+                            Color:
+                                rgba: hex('#7F94AB') if self.hovered else hex('#AFAFAF')
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [10]
+
+            Label:
+                id: output
+                canvas.before:
+                    Color:
+                        rgba: hex('#000000')
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                text: "talk\ntalk\ntalk\ntalk\ntalk\ntalk\n"
+                color: hex('#AAAAAA')
 
 
-            FloatLayout:
-                # size_hint: (0.8, 1)
-                MyButton:
-                    background_color: 0,0,0,0
-                    text: "Change Your Picture"
-                    bold: True
-                    on_press: root.change_picture()
-                    pos_hint: {'center_y': 0.5, 'center_x': 0.5}
-                    size_hint: (0.85, 0.2)
-                    canvas.before:
-                        Color:
-                            rgba: hex('#1D8515') if self.hovered else hex('#105A0A')
-                        RoundedRectangle:
-                            pos: self.pos
-                            size: self.size
-                            radius: [10]
-
-            FloatLayout:
-                # size_hint: (0.8, 1)
-                MyButton:
-                    background_color: 0,0,0,0
-                    text: "Detect"
-                    bold: True
-                    on_press: root.detect_objects()
-                    pos_hint: {'center_y': 0.5, 'center_x': 0.5}
-                    size_hint: (0.85, 0.2)
-                    canvas.before:
-                        Color:
-                            rgba: hex('#1D8515') if self.hovered else hex('#105A0A')
-                        RoundedRectangle:
-                            pos: self.pos
-                            size: self.size
-                            radius: [10]
 
 ###############################################
 
