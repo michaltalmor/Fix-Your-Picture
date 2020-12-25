@@ -1,3 +1,6 @@
+import os
+
+
 import cv2
 import kivy
 from kivy.core.window import Window
@@ -6,6 +9,7 @@ from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.popup import Popup
 from kivy.uix.widget import Widget
+from kivy.uix.image import Image
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.config import Config
@@ -29,13 +33,21 @@ class MyLayout(Widget):
 
     def change_picture(self, img_path="party.jpeg"):
         self.my_image.source = img_path
+        self.my_image.reload()
 
     def detect_objects(self):
         self.my_detection.load_image(self.my_image.source)
         img = self.my_detection.detect_objects()
-        cv2.imshow("Image", img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        self.load_detected_image(img)
+        # cv2.imshow("Image", img)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+
+    def load_detected_image(self, img):
+        new_img_path = self.my_image.source
+        cv2.imwrite(new_img_path, img)
+        self.change_picture(new_img_path)
+
 
     def load_picture(self):
         self.the_popup = FileChoosePopup(load=self.load)
@@ -59,5 +71,5 @@ class MyApp(App):
 
 if __name__ == '__main__':
     Window.borderless = False
-    Window.size = (800, 400)
+    Window.size = (1000, 500)
     MyApp().run()
