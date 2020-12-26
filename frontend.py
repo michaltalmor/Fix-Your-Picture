@@ -48,6 +48,15 @@ class MyLayout(Widget):
         self.the_popup.dismiss()
         self.change_picture(new_image_path)
 
+    def recalculate_and_detect_object(self, object_index):
+        img = self.my_detection.redraw(object_index)
+        grade = self.my_detection.calculate_grade()
+        # binding function
+        cv2.imshow("Image", img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+
 
 class MyButton(HoverBehavior, Button):
     pass
