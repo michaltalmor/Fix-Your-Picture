@@ -34,6 +34,7 @@ class MyLayout(Widget):
             self.detect.disabled = True
             self.output.text = "\n Load your image to get grade"
             self.input.disabled = True
+            self.input.text = ""
             self.tag.disabled = True
 
     def detect_objects(self):
@@ -66,12 +67,28 @@ class MyLayout(Widget):
         self.detect.disabled = False
         self.input.disabled = True
         self.tag.disabled = True
+        self.input.text = ""
+        self.output.text = "\n Press 'Detect' to get grade"
 
     def recalculate_and_detect_object(self):
-        img = self.my_detection.redraw(int(self.input.text))
+        if not self.input.text.isdigit():
+            self.raise_popup("Error", "Input must be a valid integer")
+            return None
+        index = int(self.input.text)
+        if index not in range(self.my_detection.get_number_of_objects()):
+            self.raise_popup("Error", "Object index is not exist")
+            return None
+        img = self.my_detection.redraw(index)
         grade = self.my_detection.calculate_grade()
         self.output.text = f"\nYour image grade is: {grade}"
         self.load_detected_image(img)
+
+    def raise_popup(self, error_type, text, change_size=None):
+        content = Button(text=text)
+        popup = Popup(title=error_type, content=content, auto_dismiss=False, size_hint=(None, None),
+                      size=(450, 200))
+        content.bind(on_press=popup.dismiss)
+        popup.open()
 
 
 class MyButton(HoverBehavior, Button):
