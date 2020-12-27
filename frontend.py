@@ -1,6 +1,5 @@
 import os
 
-
 import cv2
 import kivy
 from kivy.core.window import Window
@@ -30,26 +29,28 @@ class MyLayout(Widget):
     my_image = ObjectProperty(None)
     the_popup = ObjectProperty(None)
     output = ObjectProperty(None)
+    detect = ObjectProperty(None)
 
-    def change_picture(self, img_path="party.jpeg"):
+    def change_picture(self, img_path="default.png"):
         self.my_image.source = img_path
         self.my_image.reload()
+        if img_path=="default.png":
+            self.detect.disabled = True
 
     def detect_objects(self):
         self.my_detection.load_image(self.my_image.source)
         img = self.my_detection.detect_objects()
         grade = self.my_detection.calculate_grade()
+        self.output.text = f"\nYour image grade is: {grade}"
         # binding function
-        cv2.imshow("Image", img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
         self.load_detected_image(img)
         # cv2.imshow("Image", img)
         # cv2.waitKey(0)
         # cv2.destroyAllWindows()
 
     def load_detected_image(self, img):
-        new_img_path = self.my_image.source
+        dot_location = self.my_image.source.rfind('.')
+        new_img_path = self.my_image.source[:dot_location] + "2" + self.my_image.source[dot_location:]
         cv2.imwrite(new_img_path, img)
         self.change_picture(new_img_path)
 
@@ -62,6 +63,7 @@ class MyLayout(Widget):
         new_image_path = str(selection[0])
         self.the_popup.dismiss()
         self.change_picture(new_image_path)
+        self.detect.disabled = False
 
 
 class MyButton(HoverBehavior, Button):
