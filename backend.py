@@ -18,22 +18,20 @@ class Detection:
         # load objects names
         with open("coco.names", "r") as f:
             self.classes = [line.strip() for line in f.readlines()]
-        # random colors for objects
-        colors = np.random.uniform(0, 255, size=(len(self.classes), 3))
-
+    # This method is for loading image
     def load_image(self, image_path):
         # Loading image
         self.img = cv2.imread(image_path)
         self.img = cv2.resize(self.img, None, fx=0.2, fy=0.2)
         self.height, self.width, self.channels = self.img.shape
 
+    # This function is for detecting the objects in the image
     def detect_objects(self, confidence_level=0.2):
         # Detecting objects
         blob = cv2.dnn.blobFromImage(self.img, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
         self.net.setInput(blob)
         outs = self.net.forward(self.output_layers)
 
-        # Showing informations on the screen
         height, width, channels = self.height, self.width, self.channels
         class_ids = []
         confidences = []
@@ -46,7 +44,6 @@ class Detection:
                 scores = detection[5:]
                 class_id = np.argmax(scores)
                 confidence = scores[class_id]
-                # if confidence > 0.5:
                 if confidence > confidence_level:
                     # get object detected details
                     center_x = int(detection[0] * width)
@@ -62,20 +59,18 @@ class Detection:
                     confidences.append(float(confidence))
                     class_ids.append(class_id)
 
-                    # print(str(self.classes[class_id]))
-                    # print(confidences)
         return self.draw_detected_object(confidences, class_ids, boxes)
 
+    # Showing informations on the screen
     def draw_detected_object(self, confidences, class_ids, boxes):
-        # grade will calculate like this: 0 - front person, 1 - back person, 2 - other object
         objects_details = []
+        # Dictionary for counting the number of objects types
         grade_object = {
-          "f_person": 0,
-          "b_person": 0,
-          "other_obj": 0
+          "f_person": 0, #front person
+          "b_person": 0, # back person
+          "other_obj": 0 # other objects
         }
         indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
-        # print(indexes)
         people = []
         for i in range(len(boxes)):
             if i in indexes:
@@ -89,6 +84,7 @@ class Detection:
                     x, y, w, h = boxes[i]
                     label = str(self.classes[class_ids[i]])
                     color = [0, 0, 255]
+                    # draw rectangle and put the name of each the object
                     cv2.rectangle(self.img, (x, y), (x + w, y + h), color, 2)
                     cv2.putText(self.img, label, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
                     # put object index number on pic
@@ -97,7 +93,6 @@ class Detection:
 
         if len(people) > 0:
             max_high = np.max(np.array(people)[:, 3])
-            # biggest_person = list(filter(lambda x: (np.array(people)[:, 3])[x] == max_high, people))[0]
             threshold_person_size_percent = 0.6
             # front person
             for i in people:
@@ -113,6 +108,7 @@ class Detection:
                     color = [255, 0, 0]
                 x, y, w, h = i
                 label = str(self.classes[0])
+                # draw rectangle and put the name of each the object
                 cv2.rectangle(self.img, (x, y), (x + w, y + h), color, 2)
                 cv2.putText(self.img, label, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
                 # put object index number on pic
@@ -127,11 +123,12 @@ class Detection:
         # cv2.destroyAllWindows()
         ##########################################################################
 
-
         return self.img
 
+    # This method is for redraw informations on the screen across to user choice
     def redraw(self, object_index):
         object_type = self.objects_details[object_index][1]
+        # Update counters on dictionary
         if object_type == "f_person":
             self.objects_details[object_index][1] = "b_person"
             self.objects_details[object_index][3] = [255, 0, 0]
@@ -154,7 +151,7 @@ class Detection:
             label = i[0]
             x, y, w, h = i[2]
             color = i[3]
-
+            # draw rectangle and put the name of each the object
             cv2.rectangle(self.img, (x, y), (x + w, y + h), color, 2)
             cv2.putText(self.img, label, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
             # put object index number on pic
@@ -168,7 +165,7 @@ class Detection:
         # cv2.destroyAllWindows()
         ##########################################################################
 
-
+    # This method is for calculating the grade for the image
     def calculate_grade(self):
         grade_object = self.grade_object
         grade = 100
@@ -176,15 +173,17 @@ class Detection:
         n_f_person = grade_object["f_person"]
         n_b_person = grade_object["b_person"]
         n = n_obj + n_f_person + n_b_person
-
+        # Algorithm
         grade = grade - 70*(n_b_person/n) - 30*(n_obj/n)
         return grade
 
+    # This method return the number of objects that detected
     def get_number_of_objects(self):
         if self.objects_details:
             return len(self.objects_details)
 
 
+# Tests
 
 # detc = Detection()
 # # detc.load_image('bad_grade.jpg')
