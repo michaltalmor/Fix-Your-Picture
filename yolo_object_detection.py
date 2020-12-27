@@ -181,6 +181,9 @@ class Detection:
         grade = grade - 70*(n_b_person/n) - 30*(n_obj/n)
         return grade
 
+    def get_number_of_objects(self):
+        if self.objects_details:
+            return len(self.objects_details)
 
 
 
@@ -191,7 +194,7 @@ class Detection:
 # detc.detect_objects()
 # print(detc.calculate_grade())
 #
-# detc.redraw(7)
+# detc.redraw(3)
 # print(detc.calculate_grade())
-
+# print(detc.get_number_of_objects())
 
