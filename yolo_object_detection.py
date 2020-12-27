@@ -122,7 +122,7 @@ class Detection:
         self.grade_object = grade_object
         self.objects_details = objects_details
 
-        ##########################################################################
+        # ##########################################################################
         # cv2.imshow("Image", self.img)
         # cv2.waitKey(0)
         # cv2.destroyAllWindows()
@@ -136,7 +136,7 @@ class Detection:
         if object_type == "f_person":
             self.objects_details[object_index][1] = "b_person"
             self.objects_details[object_index][3] = [255, 0, 0]
-            self.grade_object["other_obj"] = self.grade_object["other_obj"] + 1
+            self.grade_object["b_person"] = self.grade_object["b_person"] + 1
             self.grade_object["f_person"] = self.grade_object["f_person"] - 1
         elif object_type == "b_person" :
             self.objects_details[object_index][1] = "f_person"
@@ -189,12 +189,16 @@ class Detection:
 
 # detc = Detection()
 # # detc.load_image('bad_grade.jpg')
-# detc.load_image('woman_in_background.jpg')
-# # detc.load_image('ice_river.jpg')
+# # detc.load_image('woman_in_background.jpg')
+# detc.load_image('ice_river.jpg')
 # detc.detect_objects()
 # print(detc.calculate_grade())
 #
-# detc.redraw(3)
+# detc.redraw(0)
+# print(detc.calculate_grade())
+# detc.redraw(0)
+# print(detc.calculate_grade())
+# detc.redraw(0)
 # print(detc.calculate_grade())
 # print(detc.get_number_of_objects())
 
