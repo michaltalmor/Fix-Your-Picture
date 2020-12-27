@@ -8,6 +8,7 @@ class Detection:
     img = None
     outs = None
     grade_object = None
+    objects_details = None
 
     def __init__(self):
         # Load Yolo
@@ -68,14 +69,14 @@ class Detection:
 
     def draw_detected_object(self, confidences, class_ids, boxes):
         # grade will calculate like this: 0 - front person, 1 - back person, 2 - other object
+        objects_details = []
         grade_object = {
-          "f_person": [],
-          "b_person": [],
-          "other_obj": []
+          "f_person": 0,
+          "b_person": 0,
+          "other_obj": 0
         }
         indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
         # print(indexes)
-        font = cv2.FONT_HERSHEY_PLAIN
         people = []
         for i in range(len(boxes)):
             if i in indexes:
@@ -85,41 +86,95 @@ class Detection:
                     color = [0, 255, 0]
                 # is not a person
                 else:
-                    grade_object["other_obj"].append(boxes[i])
+                    grade_object["other_obj"] = grade_object["other_obj"] + 1
                     x, y, w, h = boxes[i]
                     label = str(self.classes[class_ids[i]])
                     color = [0, 0, 255]
                     cv2.rectangle(self.img, (x, y), (x + w, y + h), color, 2)
-                    cv2.putText(self.img, label, (x, y + 30), font, 3, color, 3)
+                    cv2.putText(self.img, label, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                    # put object index number on pic
+                    cv2.putText(self.img, str(len(objects_details)), (x + w, y + h), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                    objects_details.append([label, "other_obj", [x, y, w, h], color])
+
         if len(people) > 0:
             max_high = np.max(np.array(people)[:, 3])
             # biggest_person = list(filter(lambda x: (np.array(people)[:, 3])[x] == max_high, people))[0]
             threshold_person_size_percent = 0.6
             # front person
             for i in people:
+                object_type = ""
                 if i[3] == max_high or i[3] >= max_high * threshold_person_size_percent:
-                    grade_object["f_person"].append(i)
+                    grade_object["f_person"] = grade_object["f_person"] + 1
+                    object_type = "f_person"
                     color = [0, 255, 0]
                 # back person
                 else:
-                    grade_object["b_person"].append(i)
+                    grade_object["b_person"] = grade_object["b_person"] + 1
+                    object_type = "b_person"
                     color = [255, 0, 0]
                 x, y, w, h = i
                 label = str(self.classes[0])
                 cv2.rectangle(self.img, (x, y), (x + w, y + h), color, 2)
-                cv2.putText(self.img, label, (x, y + 30), font, 3, color, 3)
+                cv2.putText(self.img, label, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                # put object index number on pic
+                cv2.putText(self.img, str(len(objects_details)), (x + w, y + h), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                objects_details.append([label, object_type, [x, y, w, h], color])
         self.grade_object = grade_object
+        self.objects_details = objects_details
+
+        ##########################################################################
         # cv2.imshow("Image", self.img)
         # cv2.waitKey(0)
         # cv2.destroyAllWindows()
+        ##########################################################################
+
+
         return self.img
+
+    def redraw(self, object_index):
+        object_type = self.objects_details[object_index][1]
+        if object_type == "f_person":
+            self.objects_details[object_index][1] = "b_person"
+            self.objects_details[object_index][3] = [255, 0, 0]
+            self.grade_object["other_obj"] = self.grade_object["other_obj"] + 1
+            self.grade_object["f_person"] = self.grade_object["f_person"] - 1
+        elif object_type == "b_person" :
+            self.objects_details[object_index][1] = "f_person"
+            self.objects_details[object_index][3] = [0, 255, 0]
+            self.grade_object["f_person"] = self.grade_object["f_person"] + 1
+            self.grade_object["b_person"] = self.grade_object["b_person"] - 1
+        elif object_type == "other_obj":
+            self.objects_details[object_index][1] = "f_person"
+            self.objects_details[object_index][3] = [0, 255, 0]
+            self.grade_object["f_person"] = self.grade_object["f_person"] + 1
+            self.grade_object["other_obj"] = self.grade_object["other_obj"] - 1
+
+        # redraw
+        indx = 0
+        for i in self.objects_details:
+            label = i[0]
+            x, y, w, h = i[2]
+            color = i[3]
+
+            cv2.rectangle(self.img, (x, y), (x + w, y + h), color, 2)
+            cv2.putText(self.img, label, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+            # put object index number on pic
+            cv2.putText(self.img, str(indx), (x + w, y + h), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+            indx += 1
+
+        ##########################################################################
+        # cv2.imshow("Image", self.img)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+        ##########################################################################
+
 
     def calculate_grade(self):
         grade_object = self.grade_object
         grade = 100
-        n_obj = len(grade_object["other_obj"])
-        n_f_person = len(grade_object["f_person"])
-        n_b_person = len(grade_object["b_person"])
+        n_obj = grade_object["other_obj"]
+        n_f_person = grade_object["f_person"]
+        n_b_person = grade_object["b_person"]
         n = n_obj + n_f_person + n_b_person
 
         grade = grade - 70*(n_b_person/n) - 30*(n_obj/n)
@@ -133,6 +188,9 @@ class Detection:
 # detc.load_image('woman_in_background.jpg')
 # # detc.load_image('ice_river.jpg')
 # detc.detect_objects()
+# print(detc.calculate_grade())
+#
+# detc.redraw(7)
 # print(detc.calculate_grade())
 
 
