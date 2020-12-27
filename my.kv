@@ -37,6 +37,8 @@
     my_image: my_image
     output: output
     detect: detect
+    input: input
+    tag: tag
 
     BoxLayout:
         canvas.before:
@@ -60,15 +62,13 @@
         BoxLayout:
             orientation:'vertical'
             padding: [0, 15, 20, 10]
-
             size_hint_x: 0.4
 
             BoxLayout:
-                size_hint_y: 0.6
                 orientation:'vertical'
 
                 FloatLayout:
-                    # size_hint: (0.8, 0.8)
+                    size_hint_y: 0.2
                     MyButton:
                         color: hex('#000000')
                         background_color: 0,0,0,0
@@ -85,7 +85,7 @@
                                 radius: [10]
 
                 FloatLayout:
-                    # size_hint: (0.8, 0.2)
+                    size_hint_y: 0.2
                     MyButton:
                         color: hex('#000000')
                         background_color: 0,0,0,0
@@ -102,7 +102,7 @@
                                 radius: [10]
 
                 FloatLayout:
-                    # size_hint: (0.8, 0.8)
+                    size_hint_y: 0.2
                     MyButton:
                         id: detect
                         color: hex('#000000')
@@ -120,24 +120,51 @@
                                 size: self.size
                                 radius: [10]
 
-            FloatLayout:
-                Label:
-                    id: output
-                    pos_hint: {'center_y': 0.5, 'center_x': 0.5}
-                    size_hint: (0.8, 0.8)
-                    text_size: self.size
-                    halign: 'center'
-                    valign: 'top'
-                    canvas.before:
-                        Color:
-                            rgba: (0, 0, 0, 0)
-                        Rectangle:
-                            pos: self.pos
-                            size: self.size
-                    text: "\n Load your image to get grade"
-                    color: hex('#000000')
+                FloatLayout:
+                    size_hint_y: 0.4
+                    Label:
+                        id: output
+                        pos_hint: {'center_y': 0.5, 'center_x': 0.5}
+                        size_hint: (0.8, 0.8)
+                        text_size: self.size
+                        halign: 'center'
+                        valign: 'top'
+                        canvas.before:
+                            Color:
+                                rgba: (0, 0, 0, 0)
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                        text: "\n Load your image to get grade"
+                        color: hex('#000000')
 
 
+                TextInput:
+                    id: input
+                    size_hint: (0.8, 0.3)
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+                    hint_text: "Put the number of the tag you want to change"
+                    disabled: True
+                    multinline: False
+
+                FloatLayout:
+                    size_hint_y: 0.2
+                    MyButton:
+                        id: tag
+                        color: hex('#000000')
+                        background_color: 0,0,0,0
+                        text: "Change Object Tag"
+                        on_press: root.recalculate_and_detect_object()
+                        pos_hint: {'center_y': 0.5, 'center_x': 0.5}
+                        size_hint: (0.85, 0.6)
+                        disabled: True
+                        canvas.before:
+                            Color:
+                                rgba: hex('#7F94AB') if (self.hovered and not self.disabled) else hex('#AFAFAF')
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [10]
 
 
 ###############################################

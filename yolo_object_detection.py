@@ -162,6 +162,7 @@ class Detection:
             cv2.putText(self.img, str(indx), (x + w, y + h), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
             indx += 1
 
+        return self.img
         ##########################################################################
         # cv2.imshow("Image", self.img)
         # cv2.waitKey(0)

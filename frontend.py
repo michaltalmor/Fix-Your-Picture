@@ -1,5 +1,3 @@
-import os
-
 import cv2
 import kivy
 from kivy.core.window import Window
@@ -26,6 +24,8 @@ class MyLayout(Widget):
     the_popup = ObjectProperty(None)
     output = ObjectProperty(None)
     detect = ObjectProperty(None)
+    input = ObjectProperty(None)
+    tag = ObjectProperty(None)
 
     def change_picture(self, img_path="default.png"):
         self.my_image.source = img_path
@@ -33,6 +33,8 @@ class MyLayout(Widget):
         if img_path == "default.png":
             self.detect.disabled = True
             self.output.text = "\n Load your image to get grade"
+            self.input.disabled = True
+            self.tag.disabled = True
 
     def detect_objects(self):
         self.my_detection.load_image(self.my_image.source)
@@ -41,10 +43,15 @@ class MyLayout(Widget):
         self.output.text = f"\nYour image grade is: {grade}"
         # binding function
         self.load_detected_image(img)
+        self.input.disabled = False
+        self.tag.disabled = False
 
     def load_detected_image(self, img):
-        dot_location = self.my_image.source.rfind('.')
-        new_img_path = self.my_image.source[:dot_location] + "2" + self.my_image.source[dot_location:]
+        if self.input.disabled:
+            dot_location = self.my_image.source.rfind('.')
+            new_img_path = self.my_image.source[:dot_location] + "2" + self.my_image.source[dot_location:]
+        else:
+            new_img_path = self.my_image.source
         cv2.imwrite(new_img_path, img)
         self.change_picture(new_img_path)
 
@@ -57,14 +64,14 @@ class MyLayout(Widget):
         self.the_popup.dismiss()
         self.change_picture(new_image_path)
         self.detect.disabled = False
+        self.input.disabled = True
+        self.tag.disabled = True
 
-    def recalculate_and_detect_object(self, object_index):
-        img = self.my_detection.redraw(object_index)
+    def recalculate_and_detect_object(self):
+        img = self.my_detection.redraw(int(self.input.text))
         grade = self.my_detection.calculate_grade()
-        # binding function
-        cv2.imshow("Image", img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        self.output.text = f"\nYour image grade is: {grade}"
+        self.load_detected_image(img)
 
 
 class MyButton(HoverBehavior, Button):
