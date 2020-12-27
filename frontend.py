@@ -8,16 +8,16 @@ from kivy.uix.widget import Widget
 from kivy.app import App
 from kivymd.uix.behaviors import HoverBehavior
 
-from yolo_object_detection import Detection
+from backend import Detection
 
 kivy.require('1.9.0')
 
 
+# Popup for loading the image
 class FileChoosePopup(Popup):
     load = ObjectProperty()
 
 
-# creating the root widget used in .kv file
 class MyLayout(Widget):
     my_detection = Detection()
     my_image = ObjectProperty(None)
@@ -27,6 +27,29 @@ class MyLayout(Widget):
     input = ObjectProperty(None)
     tag = ObjectProperty(None)
 
+    """
+    This method opens the popup for selecting the users's image from his local browser
+    """
+    def load_picture(self):
+        self.the_popup = FileChoosePopup(load=self.load)
+        self.the_popup.open()
+
+    """
+    This method is responsible for loading the image that the user chose.
+    """
+    def load(self, selection):
+        new_image_path = str(selection[0])
+        self.the_popup.dismiss()
+        self.change_picture(new_image_path)
+        self.detect.disabled = False
+        self.input.disabled = True
+        self.tag.disabled = True
+        self.input.text = ""
+        self.output.text = "\n Press 'Detect' to get grade"
+
+    """
+    This method is responsible for changing the displayed image on the GUI
+    """
     def change_picture(self, img_path="default.png"):
         self.my_image.source = img_path
         self.my_image.reload()
@@ -37,6 +60,10 @@ class MyLayout(Widget):
             self.input.text = ""
             self.tag.disabled = True
 
+    """
+    This method calls the correspond method in the backend. 
+    Responsible for finding the detected objects
+    """
     def detect_objects(self):
         self.my_detection.load_image(self.my_image.source)
         img = self.my_detection.detect_objects()
@@ -47,6 +74,9 @@ class MyLayout(Widget):
         self.input.disabled = False
         self.tag.disabled = False
 
+    """
+    This method is responsible for displaying the detected objects. 
+    """
     def load_detected_image(self, img):
         if self.input.disabled:
             dot_location = self.my_image.source.rfind('.')
@@ -55,20 +85,6 @@ class MyLayout(Widget):
             new_img_path = self.my_image.source
         cv2.imwrite(new_img_path, img)
         self.change_picture(new_img_path)
-
-    def load_picture(self):
-        self.the_popup = FileChoosePopup(load=self.load)
-        self.the_popup.open()
-
-    def load(self, selection):
-        new_image_path = str(selection[0])
-        self.the_popup.dismiss()
-        self.change_picture(new_image_path)
-        self.detect.disabled = False
-        self.input.disabled = True
-        self.tag.disabled = True
-        self.input.text = ""
-        self.output.text = "\n Press 'Detect' to get grade"
 
     def recalculate_and_detect_object(self):
         if not self.input.text.isdigit():

@@ -23,12 +23,11 @@ class Detection:
 
     def load_image(self, image_path):
         # Loading image
-        # img = cv2.imread("bad_grade.jpg")
         self.img = cv2.imread(image_path)
         self.img = cv2.resize(self.img, None, fx=0.2, fy=0.2)
         self.height, self.width, self.channels = self.img.shape
 
-    def detect_objects(self, confidence_level=0.5):
+    def detect_objects(self, confidence_level=0.2):
         # Detecting objects
         blob = cv2.dnn.blobFromImage(self.img, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
         self.net.setInput(blob)
